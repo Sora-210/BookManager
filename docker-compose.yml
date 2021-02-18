@@ -1,0 +1,11 @@
+version: '3'
+services:
+  workspace:
+    tty: true
+    build: ./docker/workspace
+    volumes:
+      - type: bind
+        source: ./workspace
+        target: /root/workspace
+    ports:
+      - "8080:8080"
