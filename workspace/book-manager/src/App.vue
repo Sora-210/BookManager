@@ -1,60 +1,136 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+    <v-navigation-drawer id="nav" v-model="isNavDrawer" app>
+    <v-list>
+      <div v-for="navItem in this.navList" :key="navItem.item">
+        <NavItem :name="navItem.name" :url="navItem.url" :icon="navItem.icon">
+        </NavItem>
       </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+    </v-list>
+    </v-navigation-drawer>
+    <v-app-bar color="primary" app dark>
+      <v-app-bar-nav-icon @click="isNavDrawer = true">
+        <v-icon>fas fa-bars</v-icon>
+      </v-app-bar-nav-icon>
+      <router-link to="/">
+        <v-toolbar-title>
+          RyukokuBooksSystem
+        </v-toolbar-title>
+      </router-link>
     </v-app-bar>
-
     <v-main>
-      <HelloWorld/>
+      <v-container>
+        <router-view @error="onErrorDialog" @success="onSuccessDialog"></router-view>
+      </v-container>
     </v-main>
+    <v-footer color="primary" dark app>
+      @2021 岡山龍谷高等学校図書委員会
+    </v-footer>
+    <v-dialog v-model="errorDialog.status" width="70%">
+      <v-card>
+        <v-card-title id="errorTitle">
+          <v-icon color=red>fas fa-exclamation-circle</v-icon>ERROR
+        </v-card-title>
+        <v-card-text>
+          {{ errorDialog.message}}
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="successDialog.status" width="70%">
+      <v-card>
+        <v-card-title id="successTitle">
+          <v-icon color=success>fas fa-exclamation-circle</v-icon>SUCCESS
+        </v-card-title>
+        <v-card-text>
+          {{ successDialog.message}}
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld';
+import NavItem from './components/NavItem';
 
 export default {
   name: 'App',
-
   components: {
-    HelloWorld,
+    NavItem
   },
-
+  methods: {
+    onSuccessDialog: function(message) {
+      this.successDialog.status = true
+      this.successDialog.message = message
+    },
+    onErrorDialog: function(message) {
+      this.errorDialog.status = true
+      this.errorDialog.message = message
+    }
+  },
   data: () => ({
-    //
+    successDialog:{
+      status:false,
+      message:"処理が完了しました"
+    },
+    errorDialog:{
+      status:false,
+      message:"エラーが発生しました"
+    },
+    isNavDrawer:true,
+    isTest:true,
+    navList: [
+      {
+        name:"Home",
+        url:"/",
+        icon:"fas fa-home"
+      },
+      // {
+      //   name:"検索",
+      //   url:"/search",
+      //   icon:"fas fa-search"
+      // },
+      // {
+      //   name:"QR",
+      //   url:"/qrcodereader",
+      //   icon:"fas fa-qrcode"
+      // },
+      // {
+      //   name:"貸出管理",
+      //   url:"/admin/rentals",
+      //   icon:"fas fa-users-cog"
+      // },
+      // {
+      //   name:"蔵書管理",
+      //   url:"/admin/collections",
+      //   icon:"fas fa-book"
+      // },
+      // {
+      //   name:"リクエスト管理",
+      //   url:"/admin/requests",
+      //   icon:"fas fa-envelope-open-text"
+      // },
+      // {
+      //   name:"設定",
+      //   url:"/admin/setting",
+      //   icon:"fas fa-cog"
+      // },
+    ]
   }),
 };
 </script>
+
+<style>
+.v-toolbar__title {
+  color:white;
+}
+a {
+  text-decoration: none;
+}
+</style>
+<style scoped>
+#errorTitle {
+  color:red;
+}
+#successTitle {
+  color:green;
+}
+</style>
